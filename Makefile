@@ -11,3 +11,6 @@ stop:
 
 bash:
 	docker-compose exec crowdsourcemail bash
+
+logs:
+	docker-compose logs -f crowdsourcemail

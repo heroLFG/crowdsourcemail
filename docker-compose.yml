@@ -10,3 +10,4 @@ services:
             - ./src:/application
         ports:
             - "1984:8080"
+        command: ["python", "./crowdsourcemail/manage.py", "runserver", "0:8080"]
