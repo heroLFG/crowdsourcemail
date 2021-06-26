@@ -14,4 +14,5 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('polls/', include('polls.urls')),
     path('admin/', admin.site.urls),
+    path('', include('frontend.urls')),  
 ]
