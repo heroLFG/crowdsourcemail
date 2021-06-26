@@ -9,14 +9,14 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
         fields = [
             'id',
             'subject',
-            'message_id',
-            'in_reply_to',
-            'from_header',
-            'to_header',
-            'outgoing',
-            'encoded',
+            # 'message_id',
+            # 'in_reply_to',
+            # 'from_header',
+            # 'to_header',
+            # 'outgoing',
+            # 'encoded',
             'processed',
-            'read',
+            # 'read',
             'text',
-            'html'
+            # 'html'
         ]

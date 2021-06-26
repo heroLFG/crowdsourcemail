@@ -1,7 +1,56 @@
 <!DOCTYPE html>
 <html>
-    <head></head>
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+        <style>
+            span.subject {
+                font-weight: 700;
+            }
+            span.text {
+                margin-left: 15px;
+                color: gray;
+            }
+            div.message {
+                height: 24px;
+                overflow-y: hidden;
+            }
+            /* tr {
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            } */
+        </style>
+    </head>
     <body>
-        single page app
+        <div class="mail_app"></div>
+        <script>
+            $(document).ready(() => {
+                $.get('/api/messages').then((data) => {
+                    updateMailApp(data);
+                });
+            });
+            function updateMailApp(mailData) {
+                const table = $('<table class="table table-dark table-striped"></table>');
+                const tbody = $('<tbody></tbody>');
+                $.each(mailData.results, (index, message) => {
+                    console.log('message', message);
+                    const messageListItem = getMessageListItem(message);
+                    tbody.append(messageListItem);
+                });
+                table.append(tbody);
+                $('.mail_app').append(table);
+            }
+            function getMessageListItem(message) {
+                const row = $('<tr></tr>');
+                const text = $(`<td class="col-11"><div class="message"><span class="subject">${message.subject}</span><span class="text">${message.text}</span></div></td>`);
+                const time = $(`<td class="col-1">${moment(message.processed).format("M/D/YY")}</td>`);
+                row.append(text);
+                row.append(time);
+                return row;
+            }
+        </script>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     </body>
 </html>
