@@ -3,3 +3,4 @@ __pycache__
 .coverage
 mailbox_attachments
 db.sqlite3
+.env

@@ -6,6 +6,8 @@ services:
             context: .
             dockerfile: dockerfiles/local/Dockerfile
         image: crowdsourcemail:latest
+        environment:
+            - DJANGO_SECRET=secret-after-this-${DJANGO_SECRET}
         volumes:
             - ./src:/application
         ports:

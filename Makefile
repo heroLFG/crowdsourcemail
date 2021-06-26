@@ -23,3 +23,6 @@ migrate:
 
 admin:
 	docker-compose exec -T crowdsourcemail bash -c 'echo "from django.contrib.auth.models import User; User.objects.create_superuser(\"root\", \"techsupport@herolfg.com\", \"changeme\")" | python crowdsourcemail/manage.py shell'
+
+key:
+	printf "DJANGO_SECRET=%s\n" "`docker-compose exec -T crowdsourcemail python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'`" > .env
