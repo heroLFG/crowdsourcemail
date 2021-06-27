@@ -27,12 +27,20 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = os.getenv('GMAIL_USER')
+EMAIL_HOST_PASSWORD = os.getenv('GMAIL_PASSWORD')
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # Application definition
 
 INSTALLED_APPS = [
     'django_mailbox',
     'rest_framework',
+    'rest_framework.authtoken',
+    'drfpasswordless',
     'polls.apps.PollsConfig',
     'mail.apps.MailConfig',
     'django.contrib.admin',
@@ -50,8 +58,16 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication'
+    ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
+}
+
+PASSWORDLESS_AUTH = {
+   'PASSWORDLESS_AUTH_TYPES': ['EMAIL'],
+   'PASSWORDLESS_EMAIL_NOREPLY_ADDRESS': 'noreply@herolfg.com',
 }
 
 MIDDLEWARE = [

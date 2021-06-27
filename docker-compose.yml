@@ -8,6 +8,8 @@ services:
         image: crowdsourcemail:latest
         environment:
             - DJANGO_SECRET=secret-after-this-${DJANGO_SECRET}
+            - GMAIL_USER=${GMAIL_USER}
+            - GMAIL_PASSWORD=${GMAIL_PASSWORD}
         volumes:
             - ./src:/application
         ports:
