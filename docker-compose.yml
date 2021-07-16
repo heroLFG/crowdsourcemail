@@ -2,6 +2,7 @@ version: "3.1"
 services:
 
     crowdsourcemail:
+        restart: unless-stopped
         build:
             context: .
             dockerfile: dockerfiles/local/Dockerfile
@@ -15,3 +16,17 @@ services:
         ports:
             - "1984:8080"
         command: ["python", "./crowdsourcemail/manage.py", "runserver", "0:8080"]
+
+    management-commands:
+        restart: unless-stopped
+        build:
+            context: .
+            dockerfile: dockerfiles/local/Dockerfile
+        image: crowdsourcemail:latest
+        environment:
+            - DJANGO_SECRET=secret-after-this-${DJANGO_SECRET}
+            - GMAIL_USER=${GMAIL_USER}
+            - GMAIL_PASSWORD=${GMAIL_PASSWORD}
+        volumes:
+            - ./src:/application
+        command: ["bash", "management.sh"]
