@@ -4,6 +4,8 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         <style>
             span.subject {
                 font-weight: 700;
@@ -23,28 +25,24 @@
         </style>
     </head>
     <body>
-        <div class="mail_app"></div>
+        <div class="nav"></div>
+        <div class="app"></div>
         <script>
+
             $(document).ready(() => {
                 init();
             });
+
             function init() {
                 const token = localStorage.getItem('token');
                 if (!token) {
                     showLogin();
                     return;
                 }
-                $.ajax({
-                    type: 'GET',
-                    url: '/api/messages/',
-                    contentType: 'application/json',
-                    headers: {
-                        'Authorization': `Token ${token}`
-                    },
-                }).then((data) => {
-                    updateMailApp(data);
-                });
+                // updateNav();
+                updateMailApp();
             }
+
             function showLogin() {
                 const html = `
 <div class="container p-4">
@@ -58,8 +56,8 @@
         </form>
     </div>
 </div>`;
-                $('.mail_app').html(html);
-                $('.mail_app').find('.login-form').submit((e) => {
+                $('.app').html(html);
+                $('.app').find('.login-form').submit((e) => {
                     const email = $('input[type="email"]').val();
                     $.post('/auth/email/', {
                         email
@@ -69,6 +67,7 @@
                     return false;
                 });
             }
+
             function showAuth(email) {
                 const html = `
 <div class="container p-4">
@@ -86,8 +85,8 @@
         </form>
     </div>
 </div>`;
-                $('.mail_app').html(html);
-                $('.mail_app').find('.auth-form').submit((e) => {
+                $('.app').html(html);
+                $('.app').find('.auth-form').submit((e) => {
                     const email = $('input[type="email"]').val();
                     const token = $('input[type="token"]').val();
                     $.post('/auth/token/', {
@@ -99,7 +98,26 @@
                     return false;
                 });
             }
-            function updateMailApp(mailData) {
+
+            function updateMailApp() {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    showLogin();
+                    return;
+                }
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/messages/',
+                    contentType: 'application/json',
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    },
+                }).then((data) => {
+                    renderMailApp(data);
+                });
+            }
+
+            function renderMailApp(mailData) {
                 const table = $('<table class="table table-dark table-striped"></table>');
                 const tbody = $('<tbody></tbody>');
                 $.each(mailData.results, (index, message) => {
@@ -108,8 +126,9 @@
                     tbody.append(messageListItem);
                 });
                 table.append(tbody);
-                $('.mail_app').append(table);
+                $('.app').append(table);
             }
+
             function getMessageListItem(message) {
                 const row = $('<tr></tr>');
                 const text = $(`<td class="col-11"><div class="message"><span class="subject">${message.subject}</span><span class="text">${message.text}</span></div></td>`);
@@ -117,6 +136,49 @@
                 row.append(text);
                 row.append(time);
                 return row;
+            }
+
+            function updateNav() {
+                const html =
+`
+<div class="container-fluid bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Navbar</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Dropdown
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+</div>`;
+                $('.nav').append(html);
             }
         </script>
         
