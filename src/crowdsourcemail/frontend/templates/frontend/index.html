@@ -95,6 +95,7 @@
                         token
                     }).then((data) => {
                         localStorage.setItem('token', data.token);
+                        route('crowdsourcemail');
                     });
                     return false;
                 });
@@ -141,9 +142,12 @@
             function initApp() {
                 let token = localStorage.getItem('token') ?? '';
                 if (!token) {
-                    $.post('/auth/token/', {}).then((data) => {
-                        console.log('gp-token', data);
+                    $.post('/auth/token/hero', {
+                        email: 'anonymous@herolfg.com',
+                        token: 'none'
+                    }).then((data) => {
                         localStorage.setItem('token', data.token);
+                        route('crowdsourcemail');
                     });
                     return;
                 }
