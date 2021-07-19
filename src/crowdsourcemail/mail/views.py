@@ -15,5 +15,5 @@ class MessageViewSet(viewsets.ModelViewSet):
         if self.request.user.username == 'anonymous':
             public_user_ids = MailSettings.objects.filter(key='MyEmailsAreVisibleToNonMembers',value=True).values_list('user__id', flat=True)
             public_user_emails = User.objects.filter(id__in=public_user_ids).values_list('email', flat=True)
-            return Message.objects.filter(from_email_address__in=public_user_emails)
-        return Message.objects.all()
+            return Message.objects.filter(from_email_address__in=public_user_emails).order_by('-processed')
+        return Message.objects.all().order_by('-processed')

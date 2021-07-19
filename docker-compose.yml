@@ -14,7 +14,7 @@ services:
         volumes:
             - ./src:/application
         ports:
-            - "1984:8080"
+            - "1985:8080"
         command: ["bash", "server.sh"]
 
     management-commands:
