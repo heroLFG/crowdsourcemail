@@ -11,6 +11,8 @@ services:
             - DJANGO_SECRET=secret-after-this-${DJANGO_SECRET}
             - GMAIL_USER=${GMAIL_USER}
             - GMAIL_PASSWORD=${GMAIL_PASSWORD}
+            - HOST=${HOST}
+            - ENV=env_${ENV}
         volumes:
             - ./src:/application
         ports:
