@@ -1,8 +1,10 @@
 from django_mailbox.models import Message
+from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework import permissions
-from mail.serializers import MessageSerializer
 
+from mail.serializers import MessageSerializer
+from mail.models import MailSettings
 
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all().order_by('-processed')
@@ -11,5 +13,7 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.username == 'anonymous':
-            return []
+            public_user_ids = MailSettings.objects.filter(key='MyEmailsAreVisibleToNonMembers',value=True).values_list('user__id', flat=True)
+            public_user_emails = User.objects.filter(id__in=public_user_ids).values_list('email', flat=True)
+            return Message.objects.filter(from_email_address__in=public_user_emails)
         return Message.objects.all()

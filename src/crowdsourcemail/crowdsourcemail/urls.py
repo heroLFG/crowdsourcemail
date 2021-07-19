@@ -29,7 +29,6 @@ class ObtainAuthTokenWithoutCallbackToken(AbstractBaseObtainAuthToken):
         return Response({'detail': 'Couldn\'t log you in. Try again later.'}, status=status.HTTP_400_BAD_REQUEST)
 
 router = routers.DefaultRouter()
-router.register(r'messages/public', views.PublicMessageViewSet)
 router.register(r'messages', views.MessageViewSet)
 
 # Wire up our API using automatic URL routing.

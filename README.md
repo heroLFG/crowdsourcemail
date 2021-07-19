@@ -1,5 +1,15 @@
 # crowdsourcemail
 
+`git clone https://github.com/heroLFG/crowdsourcemail.git`
+
+## setup fork of django-mailbox (unless/until it is merged into the upstream)
+
+```
+cd crowdsourcemail/src/crowdsourcemail
+git clone https://github.com/GavinPalmer1984/django-mailbox.git
+cd ../..
+```
+
 ## setup on local instructions
 ```
 make build
