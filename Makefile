@@ -10,7 +10,7 @@ stop:
 	docker-compose down
 
 bash:
-	docker-compose exec crowdsourcemail bash
+	docker-compose exec crowdsourcemail management-commands bash
 
 logs:
 	docker-compose logs -f crowdsourcemail

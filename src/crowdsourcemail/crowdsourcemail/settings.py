@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('ENV') == 'env_test'
 
-ALLOWED_HOSTS = [os.getenv('HOST')]
+ALLOWED_HOSTS = ['localhost', os.getenv('HOST')]
 
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
