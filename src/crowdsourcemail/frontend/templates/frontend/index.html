@@ -25,6 +25,9 @@
             div.app {
                 height: calc(100% - 56px);
             }
+            .hidden {
+                display: none;
+            }
         </style>
     </head>
     <body>
@@ -37,6 +40,20 @@
             });
 
             function init() {
+                const herolfg = localStorage.getItem('herolfg');
+                window.herolfg = herolfg ? JSON.parse(herolfg) : '';
+                if (!window.herolfg) {
+                    $.post('/auth/token/hero', {
+                        email: 'anonymous@herolfg.com',
+                        token: 'none'
+                    }).then((data) => {
+                        window.herolfg = { token: data.token, profile: { isAnonymous: true } };
+                        localStorage.setItem('herolfg', JSON.stringify(window.herolfg));
+                        initNav();
+                        initApp();
+                    });
+                    return;
+                }
                 initNav();
                 initApp();
             }
@@ -94,8 +111,12 @@
                         email,
                         token
                     }).then((data) => {
-                        localStorage.setItem('token', data.token);
+                        window.herolfg.token = data.token;
+                        window.herolfg.profile.isAnonymous = false;
+                        window.herolfg.profile.email = email;
+                        localStorage.setItem('herolfg', JSON.stringify(window.herolfg));
                         route('crowdsourcemail');
+                        updateNav();
                     });
                     return false;
                 });
@@ -117,17 +138,20 @@
           <a class="nav-link crowdsourcemail" aria-current="page">Crowdsource Mail</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link settings">Settings</a>
+          <a class="nav-link settings hidden">Settings</a>
         </li>
         <li class="nav-item">
           <a class="nav-link login">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link logout hidden">Logout</a>
         </li>
       </ul>
     </div>
   </div>
 </nav>
 `;
-                $('.main-nav').append(html);
+                $('.main-nav').html(html);
                 $('.crowdsourcemail').click(() => {
                     route('crowdsourcemail');
                 });
@@ -137,21 +161,22 @@
                 $('.login').click(() => {
                     route('login');
                 });
+                $('.logout').click(() => {
+                    localStorage.setItem('herolfg', '');
+                    init();
+                });
+                updateNav();
+            }
+
+            function updateNav() {
+                if (!window.herolfg.profile.isAnonymous) {
+                    $('.nav-link.settings').removeClass('hidden');
+                    $('.nav-link.login').addClass('hidden');
+                    $('.nav-link.logout').removeClass('hidden');
+                }
             }
 
             function initApp() {
-                let token = localStorage.getItem('token') ?? '';
-                if (!token) {
-                    $.post('/auth/token/hero', {
-                        email: 'anonymous@herolfg.com',
-                        token: 'none'
-                    }).then((data) => {
-                        localStorage.setItem('token', data.token);
-                        route('crowdsourcemail');
-                    });
-                    return;
-                }
-                
                 window.onpopstate = ((state) => {
                     const path = window.location.pathname;
                     route(path.replaceAll('/', ''));
@@ -183,7 +208,7 @@
     <div class="row g-8 g-m-5">
         <form class="profile-form bg-light p-5 rounded border">
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" disabled>
                 <label class="form-check-label" for="flexSwitchCheckDefault">My Emails are Visible to Non Members</label>
             </div>
         </form>
@@ -196,15 +221,11 @@
 
             /* begin crowdsourcemail app */
             function showCrowdsourcemailApp() {
-                let token = localStorage.getItem('token') ?? '';
+                let token = window.herolfg.token;
                 let url = '/api/messages/';
                 let headers = {
                     'Authorization': `Token ${token}`
                 };
-                if (!token) {
-                    header = {};
-                    url = '/api/messages/public/';
-                }
                 $.ajax({
                     type: 'GET',
                     url,
