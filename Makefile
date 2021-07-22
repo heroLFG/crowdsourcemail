@@ -10,10 +10,10 @@ stop:
 	docker-compose down
 
 bash:
-	docker-compose exec crowdsourcemail management-commands bash
+	docker-compose exec crowdsourcemail bash
 
 logs:
-	docker-compose logs -f crowdsourcemail
+	docker-compose logs -f crowdsourcemail management-commands
 
 test:
 	docker-compose exec -T crowdsourcemail bash -c "coverage run --source="./crowdsourcemail" crowdsourcemail/manage.py test polls && coverage report"
