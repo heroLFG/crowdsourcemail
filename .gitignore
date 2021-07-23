@@ -5,3 +5,4 @@ mailbox_attachments
 db.sqlite3
 .env
 src/crowdsourcemail/django-mailbox/*
+src/messages

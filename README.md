@@ -46,3 +46,13 @@ https://stackoverflow.com/a/25238515/1686280
 
 ### enable IMAP
 https://support.google.com/mail/answer/7126229?hl=en
+
+## TODO
+
+### Tech Debt
+- move frontend single page app to its own docker-compose service
+
+### Minimum Viable Product
+- paginate on email list
+- select email list to view email
+- provide feedback on email
