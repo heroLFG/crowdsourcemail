@@ -16,7 +16,7 @@ logs:
 	docker-compose logs -f crowdsourcemail management-commands
 
 test:
-	docker-compose exec -T crowdsourcemail bash -c "coverage run --source="./crowdsourcemail" crowdsourcemail/manage.py test polls && coverage report"
+	docker-compose exec -T crowdsourcemail bash -c "coverage run --source="./crowdsourcemail" crowdsourcemail/manage.py test django_mailbox && coverage report"
 
 migrate:
 	docker-compose exec -T crowdsourcemail bash -c "python crowdsourcemail/manage.py migrate"

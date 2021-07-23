@@ -35,7 +35,6 @@ router.register(r'messages', views.MessageViewSet)
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('api/', include(router.urls)),
-    path('polls/', include('polls.urls')),
     # path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),
     path(api_settings.PASSWORDLESS_AUTH_PREFIX + 'token/hero', ObtainAuthTokenWithoutCallbackToken.as_view()),
