@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drfpasswordless',
-    'polls.apps.PollsConfig',
+    'django_extensions',
     'mail.apps.MailConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -154,3 +154,5 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STATIC_ROOT = '/application/public'
