@@ -16,7 +16,7 @@ services:
         volumes:
             - ./src:/application
         ports:
-            - "1985:8080"
+            - 1985:8080
         command: ["bash", "server.sh"]
 
     management-commands:
@@ -32,3 +32,16 @@ services:
         volumes:
             - ./src:/application
         command: ["bash", "management.sh"]
+
+    frontend:
+        restart: unless-stopped
+        build:
+            context: .
+            dockerfile: dockerfiles/nginx/Dockerfile
+        image: frontend:latest
+        volumes:
+            - ./nginx.conf:/etc/nginx/nginx.conf
+            - ./src/frontend:/home/www-data/static
+        ports:
+            - 1986:80
+            - 1987:443
