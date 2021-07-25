@@ -37,8 +37,8 @@ services:
         restart: unless-stopped
         build:
             context: .
-            dockerfile: dockerfiles/nginx/Dockerfile
-        image: frontend:latest
+            dockerfile: dockerfiles/frontend/Dockerfile
+        image: frontend:nginx-webpack
         volumes:
             - ./nginx.conf:/etc/nginx/nginx.conf
             - ./src/frontend:/home/www-data/static
