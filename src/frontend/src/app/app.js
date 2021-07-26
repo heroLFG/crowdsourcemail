@@ -1,3 +1,5 @@
+import css from './app.css';
+
 import nav from '../nav/nav.js';
 import router from '../router/router.js';
 

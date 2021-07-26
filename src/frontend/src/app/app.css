@@ -1,0 +1,31 @@
+span.subject {
+    font-weight: 700;
+}
+
+span.text {
+    margin-left: 15px;
+    color: gray;
+}
+
+div.message {
+    height: 24px;
+    overflow-y: hidden;
+}
+
+a,
+a label {
+    cursor: pointer;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+div.app {
+    height: calc(100% - 56px);
+}
+
+.hidden {
+    display: none;
+}
