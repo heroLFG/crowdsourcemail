@@ -9,7 +9,7 @@ span.text {
 
 div.message {
     height: 24px;
-    overflow-y: hidden;
+    overflow: hidden;
 }
 
 a,
@@ -20,12 +20,19 @@ a label {
 html,
 body {
     height: 100%;
+    width: 100%;
 }
 
 div.app {
     height: calc(100% - 56px);
+    width: 100%;
 }
 
 .hidden {
     display: none;
+}
+
+table {
+    width: 100%;
+    table-layout: fixed;
 }
