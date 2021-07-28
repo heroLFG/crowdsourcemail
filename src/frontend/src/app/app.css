@@ -36,3 +36,7 @@ table {
     width: 100%;
     table-layout: fixed;
 }
+
+.date-column {
+    width: 85px;
+}

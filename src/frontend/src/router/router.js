@@ -6,7 +6,6 @@ const router = {
     
     route: (route) => {
         const routes = {
-            crowdsourcemail: crowdsourcemail.showCrowdsourcemailApp,
             settings: settings.showSettingsApp,
             login: auth.showLogin,
         };
@@ -15,7 +14,12 @@ const router = {
         if (!routes[route]) {
             route = 'crowdsourcemail';
         }
-        routes[route].call();
+        if (route === 'crowdsourcemail') {
+            const crowdMailApp = new crowdsourcemail();
+            crowdMailApp.showCrowdsourcemailApp();
+        } else {
+            routes[route].call();
+        }
         $(`.nav-link.${route}`).addClass('active');
     }
 
