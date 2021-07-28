@@ -1,6 +1,6 @@
 class crowdsourcemail {
     
-    pageSize = 100;
+    pageSize = 20;
     mailData =  null;
     nextButton = null;
     previousButton = null;
@@ -8,7 +8,7 @@ class crowdsourcemail {
     showCrowdsourcemailApp(url = null) {
         let token = window.herolfg.token;
         if (url === null) {
-            url = '/api/messages/';
+            url = `/api/messages/?page_size=${this.pageSize}`;
         }
         let headers = {
             'Authorization': `Token ${token}`
@@ -55,7 +55,11 @@ class crowdsourcemail {
             const nextPage = parseInt(this.mailData.next.split('?page=')[1], 10);
             start = ((nextPage - 2) * this.pageSize) + 1;
         } else if (this.mailData.previous) {
-            const prevPage = parseInt(this.mailData.previous.split('?page=')[1], 10);
+            let prevPage = 1;
+            const parts = this.mailData.previous.split('?page=');
+            if (parts.length === 2) {
+                prevPage = parseInt(parts[1], 10);
+            }
             start = ((prevPage) * this.pageSize) + 1;
         }
         const end = start + this.mailData.results.length - 1;
