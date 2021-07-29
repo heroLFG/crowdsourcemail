@@ -12,6 +12,7 @@ services:
             - GMAIL_USER=${GMAIL_USER}
             - GMAIL_PASSWORD=${GMAIL_PASSWORD}
             - HOST=${HOST}
+            - CDN_HOST=${CDN_HOST}
             - ENV=env_${ENV}
         volumes:
             - ./src:/application
@@ -44,4 +45,3 @@ services:
             - ./src/frontend:/home/www-data/static
         ports:
             - 1986:80
-            - 1987:443
