@@ -59,7 +59,7 @@ const auth = {
                 window.herolfg.profile.isAnonymous = false;
                 window.herolfg.profile.email = email;
                 localStorage.setItem('herolfg', JSON.stringify(window.herolfg));
-                router.route('crowdsourcemail');
+                router.route(router.CROWDSOURCEMAIL_MESSAGE_LIST_VIEW);
                 nav.updateNav();
             });
             return false;

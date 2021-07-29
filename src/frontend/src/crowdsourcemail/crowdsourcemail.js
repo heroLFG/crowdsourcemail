@@ -1,3 +1,5 @@
+import router from "../router/router";
+
 class crowdsourcemail {
     
     pageSize = 20;
@@ -6,11 +8,11 @@ class crowdsourcemail {
     previousButton = null;
 
     showCrowdsourcemailApp(url = null) {
-        let token = window.herolfg.token;
+        const token = window.herolfg.token;
         if (url === null) {
             url = `/api/messages/?page_size=${this.pageSize}`;
         }
-        let headers = {
+        const headers = {
             'Authorization': `Token ${token}`
         };
         $.ajax({
@@ -25,7 +27,7 @@ class crowdsourcemail {
     }
 
     renderMailApp() {
-        const table = $('<table class="table table-striped"></table>');
+        const table = $('<table class="table table-striped table-hover"></table>');
         const tbody = $('<tbody></tbody>');
         $.each(this.mailData.results, (index, message) => {
             const messageListItem = this.getMessageListItem(message);
@@ -37,11 +39,15 @@ class crowdsourcemail {
         container.append(actionBar);
         container.append(table);
         $('.app').html(container);
+        $('.app tr').click((e) => {
+            const messageId = $(e.currentTarget).attr('data-id');
+            router.route(router.CROWDSOURCEMAIL_MESSAGE_ITEM_VIEW, messageId);
+        });
         this.updateActionBarState();
     }
 
     getMessageListItem(message) {
-        const row = $('<tr></tr>');
+        const row = $(`<tr data-id="${message.id}"></tr>`);
         const text = $(`<td class="col-auto"><div class="message"><span class="subject">${message.subject}</span><span class="text">${message.text}</span></div></td>`);
         const time = $(`<td class="date-column">${moment(message.processed).format("M/D/YY")}</td>`);
         row.append(text);

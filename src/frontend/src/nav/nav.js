@@ -15,7 +15,7 @@ const nav = {
 <div class="collapse navbar-collapse" id="navbarNavDropdown">
 <ul class="navbar-nav">
 <li class="nav-item">
-  <a class="nav-link crowdsourcemail" aria-current="page">Crowdsource Mail</a>
+  <a class="nav-link ${router.CROWDSOURCEMAIL_MESSAGE_LIST_VIEW}" aria-current="page">Crowdsource Mail</a>
 </li>
 <li class="nav-item">
   <a class="nav-link settings hidden">Settings</a>
@@ -32,8 +32,8 @@ const nav = {
 </nav>
 `;
         $('.main-nav').html(html);
-        $('.crowdsourcemail').click(() => {
-            router.route('crowdsourcemail');
+        $(`.${router.CROWDSOURCEMAIL_MESSAGE_LIST_VIEW}`).click(() => {
+            router.route(router.CROWDSOURCEMAIL_MESSAGE_LIST_VIEW);
         });
         $('.settings').click(() => {
             router.route('settings');

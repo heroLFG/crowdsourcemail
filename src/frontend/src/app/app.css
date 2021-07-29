@@ -1,22 +1,6 @@
-span.subject {
-    font-weight: 700;
-}
-
-span.text {
-    margin-left: 15px;
-    color: gray;
-}
-
-div.message {
-    height: 24px;
-    overflow: hidden;
-}
-
-a,
-a label {
-    cursor: pointer;
-}
-
+/**
+app
+*/
 html,
 body {
     height: 100%;
@@ -32,6 +16,31 @@ div.app {
     display: none;
 }
 
+/**
+nav
+*/
+a,
+a label {
+    cursor: pointer;
+}
+
+/**
+crowdsourcemail
+*/
+span.subject {
+    font-weight: 700;
+}
+
+span.text {
+    margin-left: 15px;
+    color: gray;
+}
+
+div.message {
+    height: 24px;
+    overflow: hidden;
+}
+
 table {
     width: 100%;
     table-layout: fixed;
@@ -39,4 +48,19 @@ table {
 
 .date-column {
     width: 85px;
+}
+
+.app tr:hover {
+    cursor: pointer;
+}
+
+/**
+crowdsouremail message item view
+*/
+.app .message-date {
+    width: 100px;
+}
+
+.app .text-body {
+    white-space: pre-wrap;
 }

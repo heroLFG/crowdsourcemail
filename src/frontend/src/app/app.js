@@ -30,7 +30,8 @@ const app = {
             route(path.replaceAll('/', ''));
         });
         const path = window.location.pathname;
-        router.route(path.replaceAll('/', ''));
+        const parts = path.split('/');
+        router.route(router.getRouteFromPath(parts[1], parts[2]), parts[2]);
     }
 
 };
