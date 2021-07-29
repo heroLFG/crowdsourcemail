@@ -27,7 +27,8 @@ const app = {
     initApp: () => {
         window.onpopstate = ((state) => {
             const path = window.location.pathname;
-            route(path.replaceAll('/', ''));
+            const parts = path.split('/');
+            router.route(router.getRouteFromPath(parts[1], parts[2]), parts[2]);
         });
         const path = window.location.pathname;
         const parts = path.split('/');
