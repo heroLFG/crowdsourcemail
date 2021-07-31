@@ -5,7 +5,7 @@ services:
         restart: unless-stopped
         build:
             context: .
-            dockerfile: dockerfiles/local/Dockerfile
+            dockerfile: dockerfiles/crowdsourcemail/Dockerfile
         image: crowdsourcemail:latest
         environment:
             - DJANGO_SECRET=secret-after-this-${DJANGO_SECRET}
@@ -24,7 +24,7 @@ services:
         restart: unless-stopped
         build:
             context: .
-            dockerfile: dockerfiles/local/Dockerfile
+            dockerfile: dockerfiles/crowdsourcemail/Dockerfile
         image: crowdsourcemail:latest
         environment:
             - DJANGO_SECRET=secret-after-this-${DJANGO_SECRET}
@@ -45,3 +45,20 @@ services:
             - ./src/frontend:/home/www-data/static
         ports:
             - 1986:80
+
+    discord-bot:
+        restart: unless-stopped
+        build:
+            context: .
+            dockerfile: dockerfiles/discord-bot/Dockerfile
+        volumes:
+            - ./src/discord-bot:/code
+        environment:
+            TOKEN: "${DISCORD_TOKEN}"
+            CLIENT_ID: "${CLIENT_ID}"
+            AUDIT_LOG_WEBHOOK: "${AUDIT_LOG_WEBHOOK}"
+        command: ["bash", "server.sh"]
+
+    redis:
+        restart: unless-stopped
+        image: "redis:alpine"

@@ -13,7 +13,7 @@ bash:
 	docker-compose exec crowdsourcemail bash
 
 logs:
-	docker-compose logs -f crowdsourcemail management-commands
+	docker-compose logs -f crowdsourcemail management-commands frontend discord-bot redis
 
 test:
 	docker-compose exec -T crowdsourcemail bash -c "coverage run --source="./crowdsourcemail" crowdsourcemail/manage.py test django_mailbox && coverage report"
@@ -32,3 +32,9 @@ webpack:
 
 front:
 	docker-compose exec frontend bash
+
+discord:
+	docker-compose exec discord-bot bash
+
+restart-discord:
+	docker-compose restart discord-bot
