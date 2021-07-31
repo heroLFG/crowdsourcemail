@@ -1,3 +1,6 @@
+import os
+import json
+import requests
 from django.contrib import admin
 from django.urls import include, path, re_path
 from django.contrib.auth.models import User
@@ -5,6 +8,28 @@ from rest_framework import routers, serializers, viewsets, permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from mail import views
+
+
+from django_mailbox.signals import message_received
+from django.dispatch import receiver
+
+
+@receiver(message_received)
+def webhooks(sender, message, **args):
+    print(f'recevied mail with subject {message.subject} from {message.mailbox.name}')
+    try:
+        webhooks = os.getenv('CROWDSOURCEMAIL_WEBHOOKS')
+        print(webhooks)
+        if not webhooks:
+            print('no webhooks configured')
+            return
+        for webhook in json.loads(webhooks):
+            print(f'notify webhook: {webhook}')
+            message = f'received mail from {message.mailbox.name}'
+            requests.post(webhook, {"content": message })
+    except Exception as e:
+        print(e)
+
 
 from django.utils.module_loading import import_string
 from drfpasswordless.settings import api_settings

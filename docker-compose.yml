@@ -30,6 +30,7 @@ services:
             - DJANGO_SECRET=secret-after-this-${DJANGO_SECRET}
             - GMAIL_USER=${GMAIL_USER}
             - GMAIL_PASSWORD=${GMAIL_PASSWORD}
+            - CROWDSOURCEMAIL_WEBHOOKS=${CROWDSOURCEMAIL_WEBHOOKS}
         volumes:
             - ./src:/application
         command: ["bash", "management.sh"]
@@ -47,7 +48,6 @@ services:
             - 1986:80
 
     discord-bot:
-        restart: unless-stopped
         build:
             context: .
             dockerfile: dockerfiles/discord-bot/Dockerfile
