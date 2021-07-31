@@ -25,8 +25,8 @@ def webhooks(sender, message, **args):
             return
         for webhook in json.loads(webhooks):
             print(f'notify webhook: {webhook}')
-            message = f'received mail from {message.mailbox.name}'
-            requests.post(webhook, {"content": message })
+            notif = f'received mail from {message.mailbox.name}'
+            requests.post(webhook, {"content": notif })
     except Exception as e:
         print(e)
 
