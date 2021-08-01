@@ -3,8 +3,9 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework import permissions
 
-from mail.serializers import MessageSerializer
-from mail.models import MailSettings
+from mail.serializers import MessageSerializer, MailTagSerializer
+from mail.models import MailSettings, MailTag
+
 
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all().order_by('-processed')
@@ -17,3 +18,9 @@ class MessageViewSet(viewsets.ModelViewSet):
             public_user_emails = User.objects.filter(id__in=public_user_ids).values_list('email', flat=True)
             return Message.objects.filter(from_email_address__in=public_user_emails).order_by('-processed')
         return Message.objects.all().order_by('-processed')
+
+
+class MessageTagViewSet(viewsets.ModelViewSet):
+    queryset = MailTag.objects.all().order_by('value')
+    serializer_class = MailTagSerializer
+    permission_classes = [permissions.IsAuthenticated]

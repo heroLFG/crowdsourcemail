@@ -58,7 +58,3 @@ services:
             CLIENT_ID: "${CLIENT_ID}"
             AUDIT_LOG_WEBHOOK: "${AUDIT_LOG_WEBHOOK}"
         command: ["bash", "server.sh"]
-
-    redis:
-        restart: unless-stopped
-        image: "redis:alpine"

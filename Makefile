@@ -2,6 +2,8 @@ build:
 	docker-compose down
 	docker-compose rm
 	docker-compose build
+	cd ./src/crowdsourcemail && sudo rm -rf django-rest-framework-passwordless && git clone https://github.com/GavinPalmer1984/django-rest-framework-passwordless.git
+	cd ./src/crowdsourcemail && sudo rm -rf django-mailbox && git clone https://github.com/GavinPalmer1984/django-mailbox.git
 
 start:
 	docker-compose up -d
@@ -13,7 +15,7 @@ bash:
 	docker-compose exec crowdsourcemail bash
 
 logs:
-	docker-compose logs -f crowdsourcemail management-commands frontend discord-bot redis
+	docker-compose logs -f crowdsourcemail management-commands frontend discord-bot
 
 test:
 	docker-compose exec -T crowdsourcemail bash -c "coverage run --source="./crowdsourcemail" crowdsourcemail/manage.py test django_mailbox && coverage report"

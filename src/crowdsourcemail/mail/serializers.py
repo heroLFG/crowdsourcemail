@@ -1,5 +1,6 @@
 from django_mailbox.models import Message
 from rest_framework import serializers
+from mail.models import MailTag
 
 
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
@@ -20,3 +21,9 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
             'text',
             # 'html'
         ]
+
+
+class MailTagSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = MailTag
+        exclude_fields = []
