@@ -18,7 +18,7 @@ class crowdsourcemailMessageItemView {
             headers,
         }).then((data) => {
             this.tags = {};
-            data.mail_tags.forEach((tag) => this.tags[tag.value] = tag.user_count);
+            data.user_mail_tags.forEach((tag_info) => this.tags[tag_info.tag.value] = true);
             console.log('tags', this.tags);
 
             const bar = this.getActionBar();
@@ -110,7 +110,7 @@ class crowdsourcemailMessageItemView {
             data: JSON.stringify({
                 value: action,
                 message: this.id,
-                set: typeof this.tags[action] === 'undefined' || this.tags[action] === null || this.tags[action] === 0
+                set: typeof this.tags[action] === 'undefined'
             })
         }).then((data) => {
             this.showMessage(this.id)

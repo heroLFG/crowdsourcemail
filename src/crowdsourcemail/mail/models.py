@@ -17,8 +17,7 @@ class MailTag(models.Model):
     def __str__(self):
         return self.value
 
-    def user_count(self):
-        return self.users.count()
-
-    def message_count(self):
-        return self.messages.count()
+class UserMailTag(models.Model):
+    user = models.ForeignKey(User, on_delete=models.PROTECT, related_name='user_mail_tags')
+    message = models.ForeignKey(Message, on_delete=models.PROTECT, related_name='user_mail_tags')
+    tag = models.ForeignKey(MailTag, on_delete=models.PROTECT, related_name='user_mail_tags')

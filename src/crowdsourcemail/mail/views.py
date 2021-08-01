@@ -7,7 +7,7 @@ from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 
 from mail.serializers import MessageSerializer, MailTagCountSerializer
-from mail.models import MailSettings, MailTag
+from mail.models import MailSettings, MailTag, UserMailTag
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,11 @@ class MessageViewSet(viewsets.ReadOnlyModelViewSet):
             messages = Message.objects.filter(from_email_address__in=public_user_emails)
         if filter != 'all':
             tag = MailTag.objects.get(value=filter)
-            messages = Message.objects.filter(mail_tags__in=[tag])
+            user_mail_tag = UserMailTag.objects.filter(tag=tag.id, user=self.request.user.id)
+            if user_mail_tag.exists():
+                messages = Message.objects.filter(user_mail_tags__in=[user_mail_tag[0]])
+            else:
+                messages = Message.objects.filter(user_mail_tags__in=[])
         else:
             messages = Message.objects.all()
         return messages.order_by('-processed')
@@ -41,20 +45,14 @@ class MessageTagViewSet(viewsets.ViewSet):
 
     def create(self, request):
         set = request.data.get('set')
-        value = request.data.get('value')
+
+        tag = MailTag.objects.get(value=request.data.get('value'))
         message = Message.objects.get(id=request.data.get('message'))
         user = request.user
         
-        tag = MailTag.objects.get(value=value)
-        
-        if set:
-            tag.messages.add(message)
-            tag.users.add(user)
-        else:
-            if tag.user_count == 1:
-                tag.messages.remove(message)
-            tag.users.remove(user)
-        tag.save()
+        (u_tag, created) = UserMailTag.objects.get_or_create(tag=tag, user=user, message=message)
+        logger.error(f'created tag {tag.value} t/f {created}')
+        if not created:
+            u_tag.delete()
 
-        serializer = MailTagCountSerializer(tag)
-        return Response(serializer.data)
+        return Response()
