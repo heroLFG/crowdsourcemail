@@ -16,11 +16,15 @@ make build
 make start
 make migrate
 make admin
+make webpack
 make key
 echo "GMAIL_USER=mygmailuser@gmail.com" >> .env
 echo "GMAIL_PASSWORD=mygmailsecret" >> .env
 echo "ENV=test" >> .env
-echo "HOST=localhost" >> .env
+echo "HOST=localhost:1985" >> .env
+echo "CDN_HOST=localhost:1986" >> .env
+echo "FRONTEND_PORT=1986" >> .env
+echo "CROWDSOURCEMAIL_PORT=1985" >> .env
 ```
 
 ## first time setup and every other time
@@ -28,16 +32,6 @@ echo "HOST=localhost" >> .env
 make stop
 make start
 ```
-
-## add a mailbox
-- goto http://localhost:1985
-- login as:
-    - root
-    - changeme
-- click "mailboxes"
-- click "add mailbox"
-- configure the new mailbox with URI like:
-    - imap+ssl://mygmailuser%40gmail.com:mygmailsecret@imap.gmail.com
 
 ## Troubleshoot
 
