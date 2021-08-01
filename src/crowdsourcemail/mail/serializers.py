@@ -12,7 +12,7 @@ class MailTagCountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MailTag
-        fields = ['value', 'user_count']
+        fields = ['value', 'user_count', 'message_count']
 
 class MessageSerializer(serializers.ModelSerializer):
     mail_tags = MailTagCountSerializer(many=True, read_only=True)

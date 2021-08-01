@@ -6,11 +6,17 @@ class crowdsourcemail {
     mailData =  null;
     nextButton = null;
     previousButton = null;
+    tags = null;
+    filter = 'all';
+
+    titleCase(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
 
     showCrowdsourcemailApp(url = null) {
         const token = window.herolfg.token;
         if (url === null) {
-            url = `/api/messages/?page_size=${this.pageSize}`;
+            url = `/api/messages/?page_size=${this.pageSize}&filter=${this.filter}`;
         }
         const headers = {
             'Authorization': `Token ${token}`
@@ -23,7 +29,54 @@ class crowdsourcemail {
         }).then((data) => {
             this.mailData = data;
             this.renderMailApp();
+            this.updateFilters();
         });
+    }
+
+    updateFilters() {
+        const token = window.herolfg.token;
+        const headers = {
+            'Authorization': `Token ${token}`
+        };
+        $.ajax({
+            type: 'GET',
+            url: '/api/tags/',
+            contentType: 'application/json',
+            headers,
+        }).then((tags) => {
+            this.tags = {};
+            tags.forEach((tag) => this.tags[tag.value] = tag.user_count);
+            console.log('tags', this.tags);
+            this.renderFilters();
+        });
+    }
+
+    renderFilters() {
+        const dropdown = $(
+`
+<div class="dropdown">
+  <button class="filter-button m-1 btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+    ${this.titleCase(this.filter)} Messages
+  </button>
+  <ul class="filter-dropdown dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+    <li><a data-val="all" class="all dropdown-item active" href="">All Messages</a></li>
+    <li><a data-val="star" class="star dropdown-item" href="">Star Messages</a></li>
+    <li><a data-val="archive" class="archive dropdown-item" href="">Archive Messages</a></li>
+    <li><a data-val="spam" class="spam dropdown-item" href="">Spam Messages</a></li>
+    <li><a data-val="trash" class="trash dropdown-item" href="">Trash Messages</a></li>
+  </ul>
+</div>
+`
+        );
+        $('.filter-dropdown').html(dropdown);
+        $('.filter-dropdown .dropdown-item').click((e) => this.filterMessages(e));
+    }
+
+    filterMessages(event) {
+        event.preventDefault();
+        this.filter = $(event.currentTarget).attr('data-val');
+        $('.filter-button').html(`${this.titleCase(this.filter)} Messages`);
+        this.showCrowdsourcemailApp();
     }
 
     renderMailApp() {
@@ -66,22 +119,26 @@ class crowdsourcemail {
             if (parts.length === 2) {
                 prevPage = parseInt(parts[1], 10);
             }
-            start = ((prevPage) * this.pageSize) + 1;
+            start = ((prevPage) * this.pageSize);
         }
         const end = start + this.mailData.results.length - 1;
 
+        const leftSide = $('<div class="float-start"><div class="filter-dropdown"></div></div>');
+
         const rightSide = $('<div class="float-end"></div>');
-
-        this.previousButton = $('<button class="m-1 btn btn-dark btn-sm previous-page">prev</button>');
-        this.previousButton.click(() => this.showPreviousPage());
-
-        this.nextButton = $('<button class="m-1 btn btn-dark btn-sm next-page">next</button>');
-        this.nextButton.click(() => this.showNextPage());
-        
-        const bar = $(`<div class="col-auto"></div><span class="m-1">${start} - ${end} of ${this.mailData.count}</span>`);
-        rightSide.append(bar).append(this.previousButton).append(this.nextButton);
+        if (this.mailData.count === 0) {
+            rightSide.append('<div class="p-2">No Messages</div>');
+        } else {
+            this.previousButton = $('<button class="m-1 btn btn-dark btn-sm previous-page">prev</button>');
+            this.previousButton.click(() => this.showPreviousPage());
+            this.nextButton = $('<button class="m-1 btn btn-dark btn-sm next-page">next</button>');
+            this.nextButton.click(() => this.showNextPage());
+            const bar = $(`<div class="col-auto"></div><span class="m-1">${start} - ${end} of ${this.mailData.count}</span>`);
+            rightSide.append(bar).append(this.previousButton).append(this.nextButton);
+        }
 
         const container = $('<div class="container-fluid"></div>');
+        container.append(leftSide);
         container.append(rightSide);
         return container;
     }

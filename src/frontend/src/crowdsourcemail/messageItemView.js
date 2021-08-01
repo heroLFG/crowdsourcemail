@@ -110,7 +110,7 @@ class crowdsourcemailMessageItemView {
             data: JSON.stringify({
                 value: action,
                 message: this.id,
-                set: this.tags[action] === null || this.tags[action] === 0
+                set: typeof this.tags[action] === 'undefined' || this.tags[action] === null || this.tags[action] === 0
             })
         }).then((data) => {
             this.showMessage(this.id)
