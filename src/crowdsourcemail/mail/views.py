@@ -24,11 +24,8 @@ class MessageViewSet(viewsets.ReadOnlyModelViewSet):
             messages = Message.objects.filter(from_email_address__in=public_user_emails)
         if filter != 'all':
             tag = MailTag.objects.get(value=filter)
-            user_mail_tag = UserMailTag.objects.filter(tag=tag.id, user=self.request.user.id)
-            if user_mail_tag.exists():
-                messages = Message.objects.filter(user_mail_tags__in=[user_mail_tag[0]])
-            else:
-                messages = Message.objects.filter(user_mail_tags__in=[])
+            user_mail_tags = UserMailTag.objects.filter(tag=tag.id, user=self.request.user.id)
+            messages = Message.objects.filter(user_mail_tags__in=user_mail_tags)
         else:
             messages = Message.objects.all()
         return messages.order_by('-processed')
