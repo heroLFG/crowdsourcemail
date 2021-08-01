@@ -7,7 +7,7 @@ from mail.serializers import MessageSerializer, MailTagSerializer
 from mail.models import MailSettings, MailTag
 
 
-class MessageViewSet(viewsets.ModelViewSet):
+class MessageViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Message.objects.all().order_by('-processed')
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -20,7 +20,7 @@ class MessageViewSet(viewsets.ModelViewSet):
         return Message.objects.all().order_by('-processed')
 
 
-class MessageTagViewSet(viewsets.ModelViewSet):
+class MessageTagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MailTag.objects.all().order_by('value')
     serializer_class = MailTagSerializer
     permission_classes = [permissions.IsAuthenticated]
