@@ -55,6 +55,7 @@ class ObtainAuthTokenWithoutCallbackToken(AbstractBaseObtainAuthToken):
 
 router = routers.DefaultRouter()
 router.register(r'messages', views.MessageViewSet)
+router.register(r'tags', views.MessageTagViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.

@@ -3,13 +3,26 @@ from rest_framework import serializers
 from mail.models import MailTag
 
 
-class MessageSerializer(serializers.HyperlinkedModelSerializer):
+class MailTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MailTag
+        fields = ['value']
+
+class MailTagCountSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = MailTag
+        fields = ['value', 'user_count']
+
+class MessageSerializer(serializers.ModelSerializer):
+    mail_tags = MailTagCountSerializer(many=True, read_only=True)
     class Meta:
         model = Message
         # exclude_fields = ['body', 'message', 'messageattachment', 'mailbox', 'eml']
         fields = [
             'id',
             'subject',
+            'mail_tags',
             # 'message_id',
             # 'in_reply_to',
             # 'from_header',
@@ -21,9 +34,3 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
             'text',
             # 'html'
         ]
-
-
-class MailTagSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = MailTag
-        exclude_fields = []
