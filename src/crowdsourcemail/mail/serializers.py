@@ -22,7 +22,7 @@ class UserMailTagSerializer(serializers.ModelSerializer):
         fields = ['user', 'message', 'tag']
 
 class MessageSerializer(serializers.ModelSerializer):
-    user_mail_tags = UserMailTagSerializer(many=True, read_only=True)
+    user_mail_tags = serializers.SerializerMethodField()
     class Meta:
         model = Message
         # exclude_fields = ['body', 'message', 'messageattachment', 'mailbox', 'eml']
@@ -41,3 +41,9 @@ class MessageSerializer(serializers.ModelSerializer):
             'text',
             # 'html'
         ]
+
+    def get_user_mail_tags(self, object):
+        user = self.context.get('request').user
+        tags = object.user_mail_tags.filter(user=user)
+        serializer = UserMailTagSerializer(tags, many=True)
+        return serializer.data
