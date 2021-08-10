@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from mail.serializers import MessageSerializer, MailTagCountSerializer
 from mail.models import MailSettings, MailTag, UserMailTag
 
+EMAILS_VISIBLE_TO_NON_MEMBERS = 'EmailsVisibleToNonMembers'
+
 logger = logging.getLogger(__name__)
 
 class MessageViewSet(viewsets.ReadOnlyModelViewSet):
@@ -18,16 +20,16 @@ class MessageViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         filter = self.request.query_params.get('filter', 'all')
-        if self.request.user.username == 'anonymous':
-            public_user_ids = MailSettings.objects.filter(key='MyEmailsAreVisibleToNonMembers',value=True).values_list('user__id', flat=True)
-            public_user_emails = User.objects.filter(id__in=public_user_ids).values_list('email', flat=True)
-            messages = Message.objects.filter(from_email_address__in=public_user_emails)
         if filter != 'all':
             tag = MailTag.objects.get(value=filter)
             user_mail_tags = UserMailTag.objects.filter(tag=tag.id, user=self.request.user.id)
             messages = Message.objects.filter(user_mail_tags__in=user_mail_tags)
         else:
             messages = Message.objects.all()
+        if self.request.user.username == 'anonymous':
+            public_user_ids = MailSettings.objects.filter(key=EMAILS_VISIBLE_TO_NON_MEMBERS, value=True).values_list('user__id', flat=True)
+            public_user_emails = User.objects.filter(id__in=public_user_ids).values_list('email', flat=True)
+            messages = messages.filter(from_email_address__in=public_user_emails)
         return messages.order_by('-processed')
 
 

@@ -18,7 +18,7 @@ logs:
 	docker-compose logs -f crowdsourcemail management-commands frontend discord-bot
 
 test:
-	docker-compose exec -T crowdsourcemail bash -c "coverage run --source="./crowdsourcemail" crowdsourcemail/manage.py test django_mailbox && coverage report"
+	docker-compose exec -T crowdsourcemail bash -c "coverage run --source="./crowdsourcemail" crowdsourcemail/manage.py test mail && coverage report"
 
 migrate:
 	docker-compose exec -T crowdsourcemail bash -c "python crowdsourcemail/manage.py migrate"
