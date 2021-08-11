@@ -10,8 +10,6 @@ before_install:
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
   - docker-compose --version
-
-  - cd /heroLFG/crowdsourcemail
   - echo "FRONTEND_PORT=1986" >> .env
   - echo "CROWDSOURCEMAIL_PORT=1985" >> .env
   - make build
