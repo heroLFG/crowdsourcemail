@@ -14,4 +14,6 @@ before_install:
   - echo "CROWDSOURCEMAIL_PORT=1985" >> .env
   - make build
   - make start
+  - docker-compose logs crowdsourcemail
+  - docker-compose ps
   - make test
