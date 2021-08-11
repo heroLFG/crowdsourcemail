@@ -1,5 +1,7 @@
 # crowdsourcemail
 
+[![Build Status](https://travis-ci.com/heroLFG/crowdsourcemail.svg?branch=main)](https://travis-ci.com/heroLFG/crowdsourcemail)
+
 `git clone https://github.com/heroLFG/crowdsourcemail.git`
 
 ## first time setup on local instructions
