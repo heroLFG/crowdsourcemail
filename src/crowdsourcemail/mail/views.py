@@ -1,10 +1,12 @@
 import json
 import logging
 
-from django_mailbox.models import Message
+from django.db.models import Count
 from django.contrib.auth.models import User
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
+
+from django_mailbox.models import Message
 
 from mail.serializers import MessageSerializer, MailTagCountSerializer
 from mail.models import MailSettings, MailTag, UserMailTag
@@ -20,16 +22,20 @@ class MessageViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         filter = self.request.query_params.get('filter', 'all')
+        manager = Message.objects.annotate(mail_tags_count=Count('user_mail_tags'))
         if filter != 'all':
             tag = MailTag.objects.get(value=filter)
-            user_mail_tags = UserMailTag.objects.filter(tag=tag.id, user=self.request.user.id)
-            messages = Message.objects.filter(user_mail_tags__in=user_mail_tags)
+            user_mail_tags = UserMailTag.objects.filter(tag=tag.id)
+            messages = manager.filter(id__in=user_mail_tags.values('message__id').distinct())
         else:
-            messages = Message.objects.all()
+            messages = manager.all()
+
         if self.request.user.username == 'anonymous':
             public_user_ids = MailSettings.objects.filter(key=EMAILS_VISIBLE_TO_NON_MEMBERS, value=True).values_list('user__id', flat=True)
             public_user_emails = User.objects.filter(id__in=public_user_ids).values_list('email', flat=True)
             messages = messages.filter(from_email_address__in=public_user_emails)
+        if filter != 'all':
+            return messages.order_by('-mail_tags_count')
         return messages.order_by('-processed')
 
 

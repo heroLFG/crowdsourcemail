@@ -38,9 +38,9 @@ https://support.google.com/mail/answer/7126229?hl=en
 ## TODO
 
 ### Tech Debt
-- move frontend single page app to its own docker-compose service
-
+- automated e2e tests
 ### Minimum Viable Product
-- paginate on email list
-- select email list to view email
-- provide feedback on email
+- ~paginate on email list~
+- ~select email list to view email~
+- ~provide feedback on email~
+- ~sort by feedback~

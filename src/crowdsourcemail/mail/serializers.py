@@ -22,6 +22,8 @@ class UserMailTagSerializer(serializers.ModelSerializer):
         fields = ['user', 'message', 'tag']
 
 class MessageSerializer(serializers.ModelSerializer):
+    mail_tags_count = serializers.SerializerMethodField()
+    mail_tags = serializers.SerializerMethodField()
     user_mail_tags = serializers.SerializerMethodField()
     class Meta:
         model = Message
@@ -29,6 +31,8 @@ class MessageSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'subject',
+            'mail_tags_count',
+            'mail_tags',
             'user_mail_tags',
             # 'message_id',
             # 'in_reply_to',
@@ -41,6 +45,14 @@ class MessageSerializer(serializers.ModelSerializer):
             'text',
             # 'html'
         ]
+
+    def get_mail_tags_count(self, object):
+        return object.user_mail_tags.all().count()
+
+    def get_mail_tags(self, object):
+        tags = object.user_mail_tags.all()
+        serializer = UserMailTagSerializer(tags, many=True)
+        return serializer.data
 
     def get_user_mail_tags(self, object):
         user = self.context.get('request').user
