@@ -1,7 +1,7 @@
 import json
 from django.test import TestCase
 from django_mailbox.models import Mailbox, Message
-from mail.models import MailSettings, MailTag
+from mail.models import MailTag
 from mail.views import EMAILS_VISIBLE_TO_NON_MEMBERS
 from rest_framework.test import RequestsClient
 from django.contrib.auth.models import User
@@ -37,7 +37,7 @@ class MailTestCase(TestCase):
         client = RequestsClient()
         response = client.get('http://localhost/api/messages/')
         assert response.status_code == 401
-    
+
     def test_post_anonymous_auth(self):
         token = self.get_anonymous_token()
         assert token != '' and token != None
@@ -59,15 +59,26 @@ class MailTestCase(TestCase):
         assert json.loads(response.content)['count'] == 0
 
     def test_get_messages_with_anonymous_token_provides_public_messages(self):
+        user1 = User.objects.create(email='gavin@herolfg.com', username='herolfg')
+        token1 = self.get_token(user1)
+        client = RequestsClient()
+        client.headers.update({'Authorization': 'Token ' + token1})
+        client.post('http://localhost/api/settings/', json={'key':EMAILS_VISIBLE_TO_NON_MEMBERS,'value':True})
+
         token = self.get_anonymous_token()
-        user = User.objects.create(email='gavin@herolfg.com', username='herolfg')
-        MailSettings.objects.create(user=user, key=EMAILS_VISIBLE_TO_NON_MEMBERS, value=True)
         mailbox = Mailbox.objects.create()
         Message.objects.create(mailbox_id=mailbox.id, from_email_address='gavin@herolfg.com')
-        client = RequestsClient()
+
         client.headers.update({'Authorization': 'Token ' + token})
         response = client.get('http://localhost/api/messages/')
         assert json.loads(response.content)['count'] == 1
+
+        client.headers.update({'Authorization': 'Token ' + token1})
+        client.post('http://localhost/api/settings/', json={'key':EMAILS_VISIBLE_TO_NON_MEMBERS,'value':True})
+
+        client.headers.update({'Authorization': 'Token ' + token})
+        response = client.get('http://localhost/api/messages/')
+        assert json.loads(response.content)['count'] == 0
 
     def test_get_messages_provides_private_messages(self):
         user = User.objects.create(email='gavin@herolfg.com', username='herolfg')

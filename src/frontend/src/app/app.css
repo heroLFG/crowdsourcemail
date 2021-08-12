@@ -64,3 +64,7 @@ crowdsouremail message item view
 .app .text-body {
     white-space: pre-wrap;
 }
+
+.app .count-column {
+    width: 50px;
+}

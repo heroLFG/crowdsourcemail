@@ -8,12 +8,14 @@ const router = {
     CROWDSOURCEMAIL_MESSAGE_ITEM_VIEW: 'crowdsourcemailMessageItemView',
     route: (route, id = null) => {
         const routes = {
-            settings: settings.showSettingsApp,
             login: auth.showLogin
         };
 
         if (typeof routes[route] !== 'undefined') {
             routes[route].call();
+        } else if (route === 'settings') {
+            const settingsView = new settings();
+            settingsView.showSettingsApp();
         } else if (route === router.CROWDSOURCEMAIL_MESSAGE_ITEM_VIEW) {
             const crowdMailMessageView = new crowdsourcemailMessageItemView();
             crowdMailMessageView.showMessage(id);

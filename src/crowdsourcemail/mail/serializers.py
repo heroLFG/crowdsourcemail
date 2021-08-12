@@ -1,6 +1,6 @@
 from django_mailbox.models import Message
 from rest_framework import serializers
-from mail.models import MailTag, UserMailTag
+from mail.models import MailSettings, MailTag, UserMailTag
 
 
 class MailTagSerializer(serializers.ModelSerializer):
@@ -27,7 +27,7 @@ class MessageSerializer(serializers.ModelSerializer):
     user_mail_tags = serializers.SerializerMethodField()
     class Meta:
         model = Message
-        # exclude_fields = ['body', 'message', 'messageattachment', 'mailbox', 'eml']
+        # exclude = ['body', 'message', 'messageattachment', 'mailbox', 'eml']
         fields = [
             'id',
             'subject',
@@ -59,3 +59,8 @@ class MessageSerializer(serializers.ModelSerializer):
         tags = object.user_mail_tags.filter(user=user)
         serializer = UserMailTagSerializer(tags, many=True)
         return serializer.data
+
+class MailSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MailSettings
+        exclude = []

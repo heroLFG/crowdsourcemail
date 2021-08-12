@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 from django_mailbox.models import Message
 
-from mail.serializers import MessageSerializer, MailTagCountSerializer
+from mail.serializers import MessageSerializer, MailTagCountSerializer, MailSettingsSerializer
 from mail.models import MailSettings, MailTag, UserMailTag
 
 EMAILS_VISIBLE_TO_NON_MEMBERS = 'EmailsVisibleToNonMembers'
@@ -61,3 +61,23 @@ class MessageTagViewSet(viewsets.ViewSet):
             u_tag.delete()
 
         return Response()
+
+class MessageSettingsViewSet(viewsets.ViewSet):
+    queryset = MailSettings.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request):
+        settings = MailSettings.objects.filter(user=request.user)
+        serializer = MailSettingsSerializer(settings, many=True)
+        return Response(serializer.data)
+
+    def create(self, request):
+        key = request.data.get('key')
+        setting = None
+        if key == EMAILS_VISIBLE_TO_NON_MEMBERS:
+            (setting, created) = MailSettings.objects.get_or_create(user=request.user, key=key, value=True)
+            if not created:
+                MailSettings.objects.filter(user=request.user, key=key).delete()
+                setting = None
+        serializer = MailSettingsSerializer(setting)
+        return Response(serializer.data)

@@ -103,6 +103,10 @@ class crowdsourcemail {
         const row = $(`<tr data-id="${message.id}"></tr>`);
         const text = $(`<td class="col-auto"><div class="message"><span class="subject">${message.subject}</span><span class="text">${message.text}</span></div></td>`);
         const time = $(`<td class="date-column">${moment(message.processed).format("M/D/YY")}</td>`);
+        if (this.filter && this.filter !== 'all') {
+            const count = $(`<td class="count-column">${message.mail_tags_count}</td>`);
+            row.append(count);
+        }
         row.append(text);
         row.append(time);
         return row;

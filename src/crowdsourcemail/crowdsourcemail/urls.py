@@ -1,6 +1,8 @@
 import os
 import json
 import requests
+import logging
+
 from django.contrib import admin
 from django.urls import include, path, re_path
 from django.contrib.auth.models import User
@@ -13,6 +15,7 @@ from mail import views
 from django_mailbox.signals import message_received
 from django.dispatch import receiver
 
+logger = logging.getLogger(__name__)
 
 @receiver(message_received)
 def webhooks(sender, message, **args):
@@ -56,6 +59,7 @@ class ObtainAuthTokenWithoutCallbackToken(AbstractBaseObtainAuthToken):
 router = routers.DefaultRouter()
 router.register(r'messages', views.MessageViewSet)
 router.register(r'tags', views.MessageTagViewSet)
+router.register(r'settings', views.MessageSettingsViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
