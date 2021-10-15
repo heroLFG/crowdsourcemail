@@ -12,7 +12,10 @@ const auth = {
         <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
         <label for="floatingInput">Email address</label>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <div class="container">
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <div class="btn btn-secondary use-google">Use Google</div>
+    </div>
 </form>
 </div>
 </div>`;
@@ -25,6 +28,10 @@ const auth = {
                 auth.showAuth(email);
             });
             return false;
+        });
+        $('.app').find('.use-google').click(() => {
+            console.log('use google clicked');
+            gapi.auth2.getAuthInstance().signIn();
         });
     },
 

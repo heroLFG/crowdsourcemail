@@ -68,3 +68,10 @@ crowdsouremail message item view
 .app .count-column {
     width: 50px;
 }
+
+/**
+crowdsourcemail auth view
+*/
+.app .login-form .use-google {
+    float: right;
+}
