@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 
 from django.db.models import Count
 from django.contrib.auth.models import User
@@ -81,3 +82,22 @@ class MessageSettingsViewSet(viewsets.ViewSet):
                 setting = None
         serializer = MailSettingsSerializer(setting)
         return Response(serializer.data)
+
+class PlaygroundViewSet(viewsets.ViewSet):
+    queryset = User.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_secret(self):
+        return os.getenv('PLAYGROUND_SECRET')
+
+    def list(self, request, *args, **kwargs):
+        if not request.user.check_password(self.get_secret()):
+            return Response('no')
+
+        users = User.objects.filter(email__contains='@test.com')
+        data = {
+            'debug' : request.user.check_password(self.get_secret())
+        }
+        for user in users:
+            data[user.id] = user.email
+        return Response(data)
