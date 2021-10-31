@@ -71,8 +71,7 @@ const auth = {
             $('#test-users').html(container);
             $("#test-users").prepend(`<h3 class="help-info">List of fake test users to impersonate during development of beta MVP</h3>`);
             $('#test-users tr').click((e) => {
-                const userId = $(e.currentTarget).attr('data-id');
-                console.log('impersonate user', userId);
+                console.log('just login with the above form using the secret password');
             });
             this.updateActionBarState();
         });

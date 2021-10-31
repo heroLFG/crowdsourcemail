@@ -1,4 +1,5 @@
 import json
+import logging
 from django.test import TestCase
 from django_mailbox.models import Mailbox, Message
 from mail.models import MailTag
@@ -7,6 +8,8 @@ from rest_framework.test import RequestsClient
 from django.contrib.auth.models import User
 from django.utils.module_loading import import_string
 from drfpasswordless.settings import api_settings
+
+logger = logging.getLogger(__name__)
 
 
 class MailTestCase(TestCase):
@@ -122,3 +125,33 @@ class MailTestCase(TestCase):
         assert data['results'][0]['id'] == message2.id
         assert data['results'][1]['mail_tags_count'] == 1
         assert data['results'][1]['id'] == message5.id
+
+    def test_get_messages_has_correct_tag_count(self):
+        self.create_default_tags()
+        mailbox = Mailbox.objects.create()
+        message1 = Message.objects.create(mailbox_id=mailbox.id)
+        user1 = User.objects.create(email='techsupport@herolfg.com', username='support')
+        user2 = User.objects.create(email='gavin@herolfg.com', username='gavin')
+        user3 = User.objects.create(email='help@herolfg.com', username='help')
+        user4 = User.objects.create(email='wordpress@herolfg.com', username='wordpress')
+        token1 = self.get_token(user1)
+        token2 = self.get_token(user2)
+        token3 = self.get_token(user3)
+        token4 = self.get_token(user4)
+        client = RequestsClient()
+        client.headers.update({'Authorization': 'Token ' + token1})
+        client.post('http://localhost/api/tags/', json={'value':'spam', 'message':message1.id})
+        client.headers.update({'Authorization': 'Token ' + token2})
+        client.post('http://localhost/api/tags/', json={'value':'star', 'message':message1.id})
+        client.headers.update({'Authorization': 'Token ' + token3})
+        client.post('http://localhost/api/tags/', json={'value':'trash', 'message':message1.id})
+        client.headers.update({'Authorization': 'Token ' + token4})
+        client.post('http://localhost/api/tags/', json={'value':'archive', 'message':message1.id})
+
+        response = client.get('http://localhost/api/messages/?filter=trash')
+        data = json.loads(response.content)
+        count = data['count']
+        logger.log(msg=f'count:{count}', level=1)
+        assert data['count'] == 1
+        assert data['results'][0]['mail_tags_count'] == 1
+        assert data['results'][0]['id'] == message1.id
