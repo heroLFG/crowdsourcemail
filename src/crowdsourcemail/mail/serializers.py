@@ -52,6 +52,8 @@ class MessageSerializer(serializers.ModelSerializer):
 
     def get_mail_tags_count(self, object):
         filter = self.context['request'].query_params.get('filter', None)
+        if filter is None:
+            return None
         tag = MailTag.objects.get(value=filter)
         user_mail_tags = UserMailTag.objects.filter(
             tag=tag.id, message=object.id)

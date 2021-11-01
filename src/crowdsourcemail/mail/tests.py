@@ -23,7 +23,8 @@ class MailTestCase(TestCase):
             (tag, created) = MailTag.objects.get_or_create(value=tag)
 
     def get_token(self, user):
-        token_creator = import_string(api_settings.PASSWORDLESS_AUTH_TOKEN_CREATOR)
+        token_creator = import_string(
+            api_settings.PASSWORDLESS_AUTH_TOKEN_CREATOR)
         (token, _) = token_creator(user)
         return token.key
 
@@ -62,29 +63,34 @@ class MailTestCase(TestCase):
         assert json.loads(response.content)['count'] == 0
 
     def test_get_messages_with_anonymous_token_provides_public_messages(self):
-        user1 = User.objects.create(email='gavin@herolfg.com', username='herolfg')
+        user1 = User.objects.create(
+            email='gavin@herolfg.com', username='herolfg')
         token1 = self.get_token(user1)
         client = RequestsClient()
         client.headers.update({'Authorization': 'Token ' + token1})
-        client.post('http://localhost/api/settings/', json={'key':EMAILS_VISIBLE_TO_NON_MEMBERS,'value':True})
+        response = client.post('http://localhost/api/settings/',
+                               json={'key': EMAILS_VISIBLE_TO_NON_MEMBERS, 'value': True})
 
         token = self.get_anonymous_token()
         mailbox = Mailbox.objects.create()
-        Message.objects.create(mailbox_id=mailbox.id, from_email_address='gavin@herolfg.com')
+        Message.objects.create(mailbox_id=mailbox.id,
+                               from_email_address='gavin@herolfg.com')
 
         client.headers.update({'Authorization': 'Token ' + token})
         response = client.get('http://localhost/api/messages/')
         assert json.loads(response.content)['count'] == 1
 
         client.headers.update({'Authorization': 'Token ' + token1})
-        client.post('http://localhost/api/settings/', json={'key':EMAILS_VISIBLE_TO_NON_MEMBERS,'value':True})
+        client.post('http://localhost/api/settings/',
+                    json={'key': EMAILS_VISIBLE_TO_NON_MEMBERS, 'value': True})
 
         client.headers.update({'Authorization': 'Token ' + token})
         response = client.get('http://localhost/api/messages/')
         assert json.loads(response.content)['count'] == 0
 
     def test_get_messages_provides_private_messages(self):
-        user = User.objects.create(email='gavin@herolfg.com', username='herolfg')
+        user = User.objects.create(
+            email='gavin@herolfg.com', username='herolfg')
         token = self.get_token(user)
         mailbox = Mailbox.objects.create()
         Message.objects.create(mailbox_id=mailbox.id)
@@ -102,21 +108,27 @@ class MailTestCase(TestCase):
         message3 = Message.objects.create(mailbox_id=mailbox.id)
         message4 = Message.objects.create(mailbox_id=mailbox.id)
         message5 = Message.objects.create(mailbox_id=mailbox.id)
-        user1 = User.objects.create(email='techsupport@herolfg.com', username='support')
-        user2 = User.objects.create(email='gavin@herolfg.com', username='gavin')
+        user1 = User.objects.create(
+            email='techsupport@herolfg.com', username='support')
+        user2 = User.objects.create(
+            email='gavin@herolfg.com', username='gavin')
         user3 = User.objects.create(email='help@herolfg.com', username='help')
-        user4 = User.objects.create(email='wordpress@herolfg.com', username='wordpress')
+        user4 = User.objects.create(
+            email='wordpress@herolfg.com', username='wordpress')
         token1 = self.get_token(user1)
         token2 = self.get_token(user2)
         token3 = self.get_token(user3)
         token4 = self.get_token(user4)
         client = RequestsClient()
         client.headers.update({'Authorization': 'Token ' + token1})
-        client.post('http://localhost/api/tags/', json={'value':'trash', 'message':message2.id})
+        client.post('http://localhost/api/tags/',
+                    json={'value': 'trash', 'message': message2.id})
         client.headers.update({'Authorization': 'Token ' + token2})
-        client.post('http://localhost/api/tags/', json={'value':'trash', 'message':message2.id})
+        client.post('http://localhost/api/tags/',
+                    json={'value': 'trash', 'message': message2.id})
         client.headers.update({'Authorization': 'Token ' + token3})
-        client.post('http://localhost/api/tags/', json={'value':'trash', 'message':message5.id})
+        client.post('http://localhost/api/tags/',
+                    json={'value': 'trash', 'message': message5.id})
 
         response = client.get('http://localhost/api/messages/?filter=trash')
         data = json.loads(response.content)
@@ -130,23 +142,30 @@ class MailTestCase(TestCase):
         self.create_default_tags()
         mailbox = Mailbox.objects.create()
         message1 = Message.objects.create(mailbox_id=mailbox.id)
-        user1 = User.objects.create(email='techsupport@herolfg.com', username='support')
-        user2 = User.objects.create(email='gavin@herolfg.com', username='gavin')
+        user1 = User.objects.create(
+            email='techsupport@herolfg.com', username='support')
+        user2 = User.objects.create(
+            email='gavin@herolfg.com', username='gavin')
         user3 = User.objects.create(email='help@herolfg.com', username='help')
-        user4 = User.objects.create(email='wordpress@herolfg.com', username='wordpress')
+        user4 = User.objects.create(
+            email='wordpress@herolfg.com', username='wordpress')
         token1 = self.get_token(user1)
         token2 = self.get_token(user2)
         token3 = self.get_token(user3)
         token4 = self.get_token(user4)
         client = RequestsClient()
         client.headers.update({'Authorization': 'Token ' + token1})
-        client.post('http://localhost/api/tags/', json={'value':'spam', 'message':message1.id})
+        client.post('http://localhost/api/tags/',
+                    json={'value': 'spam', 'message': message1.id})
         client.headers.update({'Authorization': 'Token ' + token2})
-        client.post('http://localhost/api/tags/', json={'value':'star', 'message':message1.id})
+        client.post('http://localhost/api/tags/',
+                    json={'value': 'star', 'message': message1.id})
         client.headers.update({'Authorization': 'Token ' + token3})
-        client.post('http://localhost/api/tags/', json={'value':'trash', 'message':message1.id})
+        client.post('http://localhost/api/tags/',
+                    json={'value': 'trash', 'message': message1.id})
         client.headers.update({'Authorization': 'Token ' + token4})
-        client.post('http://localhost/api/tags/', json={'value':'archive', 'message':message1.id})
+        client.post('http://localhost/api/tags/',
+                    json={'value': 'archive', 'message': message1.id})
 
         response = client.get('http://localhost/api/messages/?filter=trash')
         data = json.loads(response.content)
