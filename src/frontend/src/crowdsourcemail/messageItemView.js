@@ -4,6 +4,7 @@ class crowdsourcemailMessageItemView {
 
     id = null;
     tags = null;
+    vote = 0;
 
     showMessage(id) {
         this.id = id;
@@ -18,8 +19,8 @@ class crowdsourcemailMessageItemView {
             headers,
         }).then((data) => {
             this.tags = {};
+            this.vote = data.user_mail_votes;
             data.user_mail_tags.forEach((tag_info) => this.tags[tag_info.tag.value] = true);
-            console.log('tags', this.tags);
 
             const bar = this.getActionBar();
             const message = this.getMessage(data);
@@ -88,10 +89,33 @@ class crowdsourcemailMessageItemView {
         trash.click(() => {
             this.doAction('trash');
         });
+
+        colorClass = this.vote === 1 ? 'btn-primary' : defaultClass;
+        const thumbUp = $(`<button class="float-end btn ${colorClass} btn-sm thumb-up m-1"><i class="fas fa-thumbs-up"></i></button>`);
+        thumbUp.click(() => {
+            let vote = 0;
+            if (this.vote !== 1) {
+                vote = 1;
+            }
+            this.doVote(vote);
+        });
+
+        colorClass = this.vote === -1 ? 'btn-primary' : defaultClass;
+        const thumbDown = $(`<button class="float-end btn ${colorClass} btn-sm thumb-down m-1"><i class="fas fa-thumbs-down"></i></button>`);
+        thumbDown.click(() => {
+            let vote = 0;
+            if (this.vote !== -1) {
+                vote = -1;
+            }
+            this.doVote(vote);
+        });
+
         rightSide.append(trash);
         rightSide.append(spam);
         rightSide.append(archive);
         rightSide.append(star);
+        rightSide.append(thumbDown);
+        rightSide.append(thumbUp);
 
         row.append(rightSide);
         return container;
@@ -111,6 +135,25 @@ class crowdsourcemailMessageItemView {
                 value: action,
                 message: this.id,
                 set: typeof this.tags[action] === 'undefined'
+            })
+        }).then((data) => {
+            this.showMessage(this.id)
+        });
+    }
+
+    doVote(vote) {
+        const token = window.herolfg.token;
+        const headers = {
+            'Authorization': `Token ${token}`
+        };
+        $.ajax({
+            type: 'POST',
+            url: `/api/votes/`,
+            contentType: 'application/json',
+            headers,
+            data: JSON.stringify({
+                vote,
+                message: this.id
             })
         }).then((data) => {
             this.showMessage(this.id)

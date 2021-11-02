@@ -28,6 +28,7 @@ class MessageSerializer(serializers.ModelSerializer):
     mail_tags_count = serializers.SerializerMethodField()
     mail_tags = serializers.SerializerMethodField()
     user_mail_tags = serializers.SerializerMethodField()
+    user_mail_votes = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
@@ -38,6 +39,7 @@ class MessageSerializer(serializers.ModelSerializer):
             'mail_tags_count',
             'mail_tags',
             'user_mail_tags',
+            'user_mail_votes',
             # 'message_id',
             # 'in_reply_to',
             # 'from_header',
@@ -72,6 +74,13 @@ class MessageSerializer(serializers.ModelSerializer):
         tags = object.user_mail_tags.filter(user=user)
         serializer = UserMailTagSerializer(tags, many=True)
         return serializer.data
+
+    def get_user_mail_votes(self, object):
+        user = self.context.get('request').user
+        votes = object.user_mail_votes.filter(user=user)
+        if votes is None or len(votes) == 0:
+            return 0
+        return votes[0].vote
 
 
 class MailSettingsSerializer(serializers.ModelSerializer):

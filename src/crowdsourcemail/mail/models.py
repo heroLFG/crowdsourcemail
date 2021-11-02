@@ -26,3 +26,11 @@ class UserMailTag(models.Model):
         Message, on_delete=models.PROTECT, related_name='user_mail_tags')
     tag = models.ForeignKey(
         MailTag, on_delete=models.PROTECT, related_name='user_mail_tags')
+
+
+class UserMailVote(models.Model):
+    vote = models.IntegerField(default=0)
+    user = models.ForeignKey(
+        User, on_delete=models.PROTECT, related_name='user_mail_votes')
+    message = models.ForeignKey(
+        Message, on_delete=models.PROTECT, related_name='user_mail_votes')

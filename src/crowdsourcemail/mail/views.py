@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from django_mailbox.models import Message
 
 from mail.serializers import MessageSerializer, MailTagCountSerializer, MailSettingsSerializer
-from mail.models import MailSettings, MailTag, UserMailTag
+from mail.models import MailSettings, MailTag, UserMailTag, UserMailVote
 
 EMAILS_VISIBLE_TO_NON_MEMBERS = 'EmailsVisibleToNonMembers'
 
@@ -112,3 +112,29 @@ class PlaygroundViewSet(viewsets.ViewSet):
         for user in users:
             data[user.id] = user.email
         return Response(data)
+
+
+class MessageVoteViewSet(viewsets.ViewSet):
+    queryset = UserMailVote.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request):
+        vote = request.data.get('vote')
+        if vote not in [-1, 0, 1]:
+            raise Exception('bad')
+
+        message = Message.objects.get(id=request.data.get('message'))
+        user = request.user
+
+        user_vote = None
+        is_created = False
+        try:
+            user_vote = UserMailVote.objects.get(user=user, message=message)
+        except:
+            [user_vote, is_created] = UserMailVote.objects.get_or_create(
+                user=user, message=message)
+
+        if not is_created:
+            user_vote.vote = vote
+            user_vote.save()
+        return Response()
