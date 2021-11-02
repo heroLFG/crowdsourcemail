@@ -4,6 +4,7 @@ import crowdsourcemail from '../crowdsourcemail/crowdsourcemail.js';
 import crowdsourcemailMessageItemView from '../crowdsourcemail/messageItemView.js';
 
 const router = {
+    previousApi: null,
     CROWDSOURCEMAIL_MESSAGE_LIST_VIEW: 'crowdsourcemailMessageListView',
     CROWDSOURCEMAIL_MESSAGE_ITEM_VIEW: 'crowdsourcemailMessageItemView',
     route: (route, id = null) => {
@@ -53,7 +54,12 @@ const router = {
             }
         }
         return route;
+    },
+    setPreviousApi: (url) => {
+        router.previousApi = url;
+    },
+    getPreviousApi: () => {
+        return router.previousApi;
     }
-
 };
 export default router;

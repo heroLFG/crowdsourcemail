@@ -15,9 +15,14 @@ class crowdsourcemail {
 
     showCrowdsourcemailApp(url = null) {
         const token = window.herolfg.token;
+        const previousUrl = router.getPreviousApi();
+        if (url === null) {
+            url = previousUrl;
+        }
         if (url === null) {
             url = `/api/messages/?page_size=${this.pageSize}&filter=${this.filter}`;
         }
+        router.setPreviousApi(url);
         const headers = {
             'Authorization': `Token ${token}`
         };
