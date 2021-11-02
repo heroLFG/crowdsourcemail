@@ -24,7 +24,7 @@ const nav = {
   <a class="nav-link login">Login</a>
 </li>
 <li class="nav-item">
-  <a class="nav-link logout hidden">Logout</a>
+  <a class="nav-link logout hidden">Logout <span class="email-display"></span></a>
 </li>
 </ul>
 </div>
@@ -51,9 +51,10 @@ const nav = {
     
     updateNav: () => {
         if (!window.herolfg.profile.isAnonymous) {
+            const email = window.herolfg.profile.email;
             $('.nav-link.settings').removeClass('hidden');
             $('.nav-link.login').addClass('hidden');
-            $('.nav-link.logout').removeClass('hidden');
+            $('.nav-link.logout').removeClass('hidden').find('.email-display').html(email);
         }
     }
 

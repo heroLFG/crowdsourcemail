@@ -68,3 +68,15 @@ crowdsouremail message item view
 .app .count-column {
     width: 50px;
 }
+
+.app .help-info {
+    color: white;
+}
+
+.app .playground-form {
+    margin-bottom: 30px;
+}
+
+#test-users {
+    margin-top: 10px;
+}

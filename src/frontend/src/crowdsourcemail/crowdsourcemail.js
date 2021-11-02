@@ -115,21 +115,22 @@ class crowdsourcemail {
     getActionBar() {
         let start = 1;
         if (this.mailData.next) {
-            const nextPage = parseInt(this.mailData.next.split('?page=')[1], 10);
+            const nextPage = parseInt((new URLSearchParams(this.mailData.next)).get('page'), 10);
             start = ((nextPage - 2) * this.pageSize) + 1;
         } else if (this.mailData.previous) {
             let prevPage = 1;
-            const parts = this.mailData.previous.split('?page=');
-            if (parts.length === 2) {
-                prevPage = parseInt(parts[1], 10);
+            const page = parseInt((new URLSearchParams(this.mailData.previous)).get('page'), 10);
+            if (page) {
+                prevPage = page;
             }
-            start = ((prevPage) * this.pageSize);
+            start = ((prevPage) * this.pageSize) + 1;
         }
         const end = start + this.mailData.results.length - 1;
 
         const leftSide = $('<div class="float-start"><div class="filter-dropdown"></div></div>');
 
         const rightSide = $('<div class="float-end"></div>');
+
         if (this.mailData.count === 0) {
             rightSide.append('<div class="p-2">No Messages</div>');
         } else {
@@ -141,7 +142,7 @@ class crowdsourcemail {
             rightSide.append(bar).append(this.previousButton).append(this.nextButton);
         }
 
-        const container = $('<div class="container-fluid"></div>');
+        const container = $('<div class="container-fluid action-bar"></div>');
         container.append(leftSide);
         container.append(rightSide);
         return container;
