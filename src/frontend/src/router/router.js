@@ -8,7 +8,8 @@ const router = {
     CROWDSOURCEMAIL_MESSAGE_ITEM_VIEW: 'crowdsourcemailMessageItemView',
     route: (route, id = null) => {
         const routes = {
-            login: auth.showLogin
+            login: auth.showLogin,
+            playground: auth.showPlayground
         };
 
         if (typeof routes[route] !== 'undefined') {
