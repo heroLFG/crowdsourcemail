@@ -16,8 +16,12 @@ class crowdsourcemail {
     showCrowdsourcemailApp(url = null) {
         const token = window.herolfg.token;
         const previousUrl = router.getPreviousApi();
-        if (url === null) {
-            url = previousUrl;
+        if (url === null && previousUrl) {
+            url = `${previousUrl}`;
+            const filter = (new URLSearchParams(url)).get('filter');
+            if (!filter) {
+                url += `&filter=${this.filter}`
+            }
         }
         if (url === null) {
             url = `/api/messages/?page_size=${this.pageSize}&filter=${this.filter}`;
@@ -81,6 +85,7 @@ class crowdsourcemail {
         event.preventDefault();
         this.filter = $(event.currentTarget).attr('data-val');
         $('.filter-button').html(`${this.titleCase(this.filter)} Messages`);
+        router.setPreviousApi(null);
         this.showCrowdsourcemailApp();
     }
 
@@ -108,6 +113,8 @@ class crowdsourcemail {
         const row = $(`<tr data-id="${message.id}"></tr>`);
         const text = $(`<td class="col-auto"><div class="message"><span class="subject">${message.subject}</span><span class="text">${message.text}</span></div></td>`);
         const time = $(`<td class="date-column">${moment(message.processed).format("M/D/YY")}</td>`);
+        const voteCount = $(`<td class="vote-count-column">${message.mail_vote_score}</td>`);
+        row.append(voteCount);
         if (this.filter && this.filter !== 'all') {
             const count = $(`<td class="count-column">${message.mail_tags_count}</td>`);
             row.append(count);

@@ -14,6 +14,7 @@ services:
             - HOST=${HOST}
             - CDN_HOST=${CDN_HOST}
             - ENV=env_${ENV}
+            - PLAYGROUND_SECRET=${PLAYGROUND_SECRET}
         volumes:
             - ./src:/application
         ports:
