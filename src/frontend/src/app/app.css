@@ -65,7 +65,8 @@ crowdsouremail message item view
     white-space: pre-wrap;
 }
 
-.app .count-column {
+.app .count-column,
+.app .vote-count-column {
     width: 50px;
 }
 

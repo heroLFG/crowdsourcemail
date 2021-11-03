@@ -2,7 +2,8 @@ import json
 import logging
 import os
 
-from django.db.models import Count
+from django.db.models import Count, Sum, F
+from django.db.models.functions import Coalesce
 from django.contrib.auth.models import User
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
@@ -10,7 +11,7 @@ from rest_framework.response import Response
 from django_mailbox.models import Message
 
 from mail.serializers import MessageSerializer, MailTagCountSerializer, MailSettingsSerializer
-from mail.models import MailSettings, MailTag, UserMailTag
+from mail.models import MailSettings, MailTag, UserMailTag, UserMailVote
 
 EMAILS_VISIBLE_TO_NON_MEMBERS = 'EmailsVisibleToNonMembers'
 
@@ -24,8 +25,9 @@ class MessageViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         filter = self.request.query_params.get('filter', 'all')
-        manager = Message.objects.annotate(
-            mail_tags_count=Count('user_mail_tags'))
+        manager = Message.objects.annotate(mail_tags_count=Count(
+            'user_mail_tags')).annotate(mail_vote_score=Coalesce(Sum(F('user_mail_votes__vote')), 0))
+
         if filter != 'all':
             tag = MailTag.objects.get(value=filter)
             user_mail_tags = UserMailTag.objects.filter(tag=tag.id)
@@ -41,9 +43,7 @@ class MessageViewSet(viewsets.ReadOnlyModelViewSet):
                 id__in=public_user_ids).values_list('email', flat=True)
             messages = messages.filter(
                 from_email_address__in=public_user_emails)
-        if filter != 'all':
-            return messages.order_by('-mail_tags_count')
-        return messages.order_by('-processed')
+        return messages.order_by('-mail_vote_score')
 
 
 class MessageTagViewSet(viewsets.ViewSet):
@@ -112,3 +112,29 @@ class PlaygroundViewSet(viewsets.ViewSet):
         for user in users:
             data[user.id] = user.email
         return Response(data)
+
+
+class MessageVoteViewSet(viewsets.ViewSet):
+    queryset = UserMailVote.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request):
+        vote = request.data.get('vote')
+        if vote not in [-1, 0, 1]:
+            raise Exception('bad')
+
+        message = Message.objects.get(id=request.data.get('message'))
+        user = request.user
+
+        user_vote = None
+        is_created = False
+        try:
+            user_vote = UserMailVote.objects.get(user=user, message=message)
+        except:
+            [user_vote, is_created] = UserMailVote.objects.get_or_create(
+                vote=vote, user=user, message=message)
+
+        if not is_created:
+            user_vote.vote = vote
+            user_vote.save()
+        return Response()
